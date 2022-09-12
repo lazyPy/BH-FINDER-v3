@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card text-bg-dark w-25 mx-auto mt-5">
+    <h1 class="card-title text-center my-4">LOGIN</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-floating text-dark mx-1">
+            <input class="form-control" {{field}}>
+            <label>{{field.label}}</label>
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary mb-3 w-50 d-grid mx-auto">Login</button>
+        <div class="d-grid">
+            <p class="mx-auto">Need an account? <a class="text-decoration-none"
+                                                       href="{% url 'register' %}">Register</a></p>
+        </div>
+    </form>
+
+</div>
+
+
+{% endblock %}

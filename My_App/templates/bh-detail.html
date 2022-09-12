@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3 class="text-center my-3">Boarding House Details</h3>
+
+<div class="row justify-content-between">
+    <div class="col-4">
+        <h4 class="text-center">{{bh.name}}</h4>
+        <p>Owner: {{bh.owner}}</p>
+        <p>Description: {{bh.description}}</p>
+        <p>Phone: {{bh.phone}}</p>
+        <p>Location: {{bh.location}}</p>
+        <p>Detail: {{bh.detail}}</p>
+        <p>Uploaded Date: {{bh.updated|timesince}} ago</p>
+        <p>Picture: <img src="{{bh.picture.url}}" alt="" width="50"></p>
+    </div>
+
+    <div class="col-7">
+        <!-- Maps -->
+        <iframe width="835" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                id="gmap_canvas"
+                src="https://maps.google.com/maps?width=835&amp;height=500&amp;hl=en&amp;q=%20Cauayan%20City+(Cauayan%20City)&amp;t=h&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+        <a href='https://addmap.net/'>google maps embedded</a>
+        <script type='text/javascript'
+                src='https://embedmaps.com/google-maps-authorization/script.js?id=c2fbea0006c9ad0d72fa28eca16a91c4fdb87704'></script>
+    </div>
+</div>
+
+{% endblock %}
