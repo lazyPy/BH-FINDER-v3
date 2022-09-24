@@ -1,22 +1,42 @@
-{% load crispy_forms_tags %}
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Boarding House</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" enctype="multipart/form-data">
-                <div class="modal-body">
-                    {% csrf_token %}
-                    {{form|crispy}}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </div>
-            </form>
-        </div>
+<h5 class="text-center">Boarding House Form</h5>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="ex. John">
     </div>
-</div>
+    <div class="mb-3">
+        <label for="desc" class="form-label">Description</label>
+        <input type="text" class="form-control" id="desc" name="description" placeholder="BH Description">
+    </div>
+    <div class="mb-3">
+        <label for="number" class="form-label">Contact Number</label>
+        <input type="number" class="form-control" id="number" name="phone" placeholder="09xxxxxxxxx">
+    </div>
+    <div class="mb-3">
+        <label for="location" class="form-label">Location or <button type="button" class="btn btn-sm btn-primary" onclick="getLoc()">Get my location</button></label>
+        <input type="text" class="form-control" id="location" name="location" placeholder="BH Location">
+    </div>
+    <div class="mb-3">
+        <label for="latitude" class="form-label">Latitude</label>
+        <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Latitude" readonly>
+    </div>
+    <div class="mb-3">
+        <label for="longitude" class="form-label">Longitude</label>
+        <input type="text" class="form-control" id="longitude" name="longitude" placeholder="Longitude" readonly>
+    </div>
+    <div class="mb-3">
+        <label for="detail" class="form-label">Detail</label>
+        <input type="text" class="form-control" id="detail" name="detail" placeholder="Some details here">
+    </div>
+    <div class="mb-3">
+        <label for="picture" class="form-label">Picture</label>
+        <input type="file" class="form-control" id="picture" name="picture"
+               accept="image/png, image/gif, image/jpeg">
+    </div>
+
+    <div class="d-grid mx-2">
+        <button class="btn btn-primary" type="submit">SUBMIT</button>
+    </div>
+</form>

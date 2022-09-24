@@ -55,6 +55,8 @@ def homePage(request):
             description=request.POST.get('description'),
             phone=request.POST.get('phone'),
             location=request.POST.get('location'),
+            latitude=request.POST.get('latitude'),
+            longitude=request.POST.get('longitude'),
             detail=request.POST.get('detail'),
             picture=request.FILES.get('picture'),
         )

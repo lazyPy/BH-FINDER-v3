@@ -11,6 +11,7 @@
           integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
 </head>
 <body>
@@ -48,8 +49,125 @@
     </div>
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCv2n4qpTGjTb3LEriFYvzRmcw0kIkI0FU&libraries=places&callback=initMap"
+        async defer></script>
+
+<script>
+            // Note: This example requires that you consent to location sharing when
+            // prompted by your browser. If you see the error "The Geolocation service
+            // failed.", it means you probably did not give permission for the browser to
+            // locate you.
+            let map, infoWindow;
+
+            function initMap() {
+
+                // Autocomplete Places
+                var input = document.getElementById('location');
+                var autocomplete = new google.maps.places.Autocomplete(input);
+                autocomplete.addListener('place_changed', function() {
+                    var place = autocomplete.getPlace();
+                    document.getElementById("latitude").value = place.geometry.location.lat();
+                    document.getElementById("longitude").value = place.geometry.location.lng();
+                });
+
+                // Maps
+                map = new google.maps.Map(document.getElementById("map"));
+                infoWindow = new google.maps.InfoWindow();
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                        map.setCenter(initialLocation);
+                        map.setZoom(10);
+
+                        infoWindow.setPosition(initialLocation);
+                        infoWindow.setContent("My location.");
+                        infoWindow.open(map);
+                        map.setCenter(initialLocation);
+                    });
+
+                }
+
+                const locationButton = document.createElement("button");
+
+                locationButton.textContent = "Show my location";
+                locationButton.classList.add("custom-map-control-button");
+                map.controls[google.maps.ControlPosition.LEFT].push(locationButton);
+                locationButton.addEventListener("click", () => {
+                    // Try HTML5 geolocation.
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const pos = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            };
+
+                        infoWindow.setPosition(pos);
+                        infoWindow.setContent("My location.");
+                        infoWindow.open(map);
+                        map.setCenter(pos);
+                    },
+                    () => {
+                        handleLocationError(true, infoWindow, map.getCenter());
+                    });
+                    } else {
+                        // Browser doesn't support Geolocation
+                        handleLocationError(false, infoWindow, map.getCenter());
+                    }
+                });
+
+                {% for bh in boarding_houses %}
+                addMarker({lat: {{bh.latitude}}, lng: {{bh.longitude}}});
+                {% endfor %}
+
+                function addMarker(coords) {
+                    const marker = new google.maps.Marker({
+                        position: coords,
+                        map: map
+                    });
+                }
+            }
+
+            function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+                infoWindow.setPosition(pos);
+                infoWindow.setContent(
+                    browserHasGeolocation
+                    ? "Error: The Geolocation service failed."
+                    : "Error: Your browser doesn't support geolocation."
+                );
+                infoWindow.open(map);
+            }
+
+            window.initMap = initMap;
+
+            function getLoc() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(showPosition);
+                }
+            }
+
+            function showPosition(position) {
+                document.getElementById("latitude").value = position.coords.latitude;
+                document.getElementById("longitude").value = position.coords.longitude;
+
+                var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                var geocoder = geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
+                            document.getElementById("location").value = results[1].formatted_address;
+                        }
+                    }
+                });
+            }
+
+</script>
+
 </body>
 </html>

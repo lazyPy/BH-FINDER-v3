@@ -130,4 +130,6 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+GOOGLE_API_KEY = 'AIzaSyCv2n4qpTGjTb3LEriFYvzRmcw0kIkI0FU'
+
 AUTH_USER_MODEL = 'My_App.User'

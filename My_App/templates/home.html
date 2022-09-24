@@ -9,16 +9,7 @@
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
     </div>
-
-    <div class="col-auto">
-        <!-- Add bh button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Add Boarding House
-        </button>
-    </div>
 </div>
-
-{% include 'bh-form.html' %}
 
 <div class="row justify-content-between">
     <div class="col-4">
@@ -42,14 +33,12 @@
             {% endfor %}
         </div>
     </div>
-    <div class="col-7">
-        <!-- Maps -->
-        <iframe width="835" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-                id="gmap_canvas"
-                src="https://maps.google.com/maps?width=835&amp;height=500&amp;hl=en&amp;q=%20Cauayan%20City+(Cauayan%20City)&amp;t=h&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
-        <a href='https://addmap.net/'>google maps embedded</a>
-        <script type='text/javascript'
-                src='https://embedmaps.com/google-maps-authorization/script.js?id=c2fbea0006c9ad0d72fa28eca16a91c4fdb87704'></script>
+
+    <div class="col-6">
+        {% include 'bh-form.html' %}
     </div>
+
+    <h4 class="text-center mt-5">Boarding House Maps</h4>
+    <div class="w-75 mx-auto" id="map" style="height: 450px; width: 100%;"></div>
 </div>
 {% endblock %}

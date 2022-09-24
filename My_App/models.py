@@ -22,6 +22,8 @@ class BoardingHouse(models.Model):
     description = models.CharField(max_length=200)
     phone = models.IntegerField(verbose_name='Contact Number')
     location = models.CharField(max_length=200)
+    latitude = models.FloatField(verbose_name="Latitude", max_length=50, null=True, blank=True)
+    longitude = models.FloatField(verbose_name="Longitude", max_length=50, null=True, blank=True)
     detail = models.CharField(max_length=200)
     picture = models.ImageField(upload_to='bh-images/')
     updated = models.DateTimeField(auto_now=True)
