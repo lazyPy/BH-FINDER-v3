@@ -1,30 +1,98 @@
 {% extends 'base.html' %}
-
 {% block content %}
+{% load static %}
 
-<h3 class="text-center my-3">Boarding House Details</h3>
+<div class="card mt-5 mx-auto" style="max-width: 50%;">
 
-<div class="row justify-content-between">
-    <div class="col-4">
-        <h4 class="text-center">{{bh.name}}</h4>
-        <p>Owner: {{bh.owner}}</p>
-        <p>Description: {{bh.description}}</p>
-        <p>Phone: {{bh.phone}}</p>
-        <p>Location: {{bh.location}}</p>
-        <p>Detail: {{bh.detail}}</p>
-        <p>Uploaded Date: {{bh.updated|timesince}} ago</p>
-        <p>Picture: <img src="{{bh.picture.url}}" alt="" width="50"></p>
+    <div class="card-header">
+        <h3 class="text-center">{{bh.name}} Boarding House</h3>
     </div>
+    <div class="row">
 
-    <div class="col-7">
-        <!-- Maps -->
-        <iframe width="835" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
-                id="gmap_canvas"
-                src="https://maps.google.com/maps?width=835&amp;height=500&amp;hl=en&amp;q=%20Cauayan%20City+(Cauayan%20City)&amp;t=h&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
-        <a href='https://addmap.net/'>google maps embedded</a>
-        <script type='text/javascript'
-                src='https://embedmaps.com/google-maps-authorization/script.js?id=c2fbea0006c9ad0d72fa28eca16a91c4fdb87704'></script>
+        <div class="col-6 my-1">
+
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="{% if bh.picture1 %}{{bh.picture1.url}}{% else %}{% static 'image/avatar.png' %}{% endif %}" class="card-img-top img-fluid rounded" style="height: 18rem"
+                             alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% if bh.picture2 %}{{bh.picture2.url}}{% else %}{% static 'image/avatar.png' %}{% endif %}" class="card-img-top img-fluid rounded" style="height: 18rem"
+                             alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% if bh.picture3 %}{{bh.picture3.url}}{% else %}{% static 'image/avatar.png' %}{% endif %}" class="card-img-top img-fluid rounded" style="height: 18rem"
+                             alt="...">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-6 align-self-center">
+            <h4 class="ms-4 fst-italic">Just visit us!</h4>
+            <div class="card-body">
+                <h5 class="card-title"><i class="fa-sharp fa-solid fa-location-dot"></i> {{bh.location}}</h5>
+                <p class="card-text">Description: {{bh.description}}</p>
+                <p class="card-text"><small class="text-muted">Owner: {{bh.owner}}</small></p>
+            </div>
+
+            <div class="mx-2">
+            {% if request.user.is_superuser %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <select class="form-select" name="admin_approval" aria-label="Default select example">
+                            <option selected>{{status}}</option>
+                            {% if status == 'APPROVED' %}
+                            <option>DENIED</option>
+                            {% else %}
+                            <option>APPROVED</option>
+                            {% endif %}
+
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </div>
+                </form>
+                {% endif %}
+                {% if request.user == bh.owner %}
+                <a href="{% url 'edit-bh' bh.id %}" class="btn btn-sm btn-primary">EDIT</a>
+                <a href="{% url 'delete-bh' bh.id %}" id="liveToastBtn" class="btn btn-sm btn-danger">DELETE</a>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+            <small class="text-muted"><h6 class="d-inline">Contact #: {{bh.phone}}</h6>
+                <span
+                        class="text-muted float-end">Last updated {{bh.updated|timesince}} ago
+                </span>
+            </small>
+        </div>
     </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  <div id="liveToast" class="toast bg-primary" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto h5 m-0">Success!</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      You have successfully created!
+    </div>
+  </div>
 </div>
 
 {% endblock %}

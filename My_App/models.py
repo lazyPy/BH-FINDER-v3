@@ -1,13 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 # Create your models here.
 
 class User(AbstractUser):
     username = models.CharField(unique=True, max_length=200, null=True)
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
-    phone = models.IntegerField(verbose_name='Contact Number')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -17,6 +17,7 @@ class User(AbstractUser):
 
 
 class BoardingHouse(models.Model):
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
@@ -24,8 +25,10 @@ class BoardingHouse(models.Model):
     location = models.CharField(max_length=200)
     latitude = models.FloatField(verbose_name="Latitude", max_length=50, null=True, blank=True)
     longitude = models.FloatField(verbose_name="Longitude", max_length=50, null=True, blank=True)
-    detail = models.CharField(max_length=200)
-    picture = models.ImageField(upload_to='bh-images/')
+    picture1 = models.FileField(upload_to='bh-images/', blank=True, null=True)
+    picture2 = models.FileField(upload_to='bh-images/', blank=True, null=True)
+    picture3 = models.FileField(upload_to='bh-images/', blank=True, null=True)
+    admin_approval = models.BooleanField(max_length=200, default=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

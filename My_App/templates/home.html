@@ -3,42 +3,56 @@
 {% block content %}
 
 <div class="row justify-content-between my-3">
-    <div class="col-4">
-        <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-    </div>
-</div>
-
-<div class="row justify-content-between">
-    <div class="col-4">
-        <div class="d-grid gap-2 d-md-block mb-2">
-            <button class="btn btn-sm btn-outline-primary">All</button>
-            <button class="btn btn-sm btn-outline-primary">Nearby</button>
+    <div class="col-5">
+        <div class="mb-3 row mx-1">
+            <label class="col-2 col-form-label fw-bold" for="searchInput">SEARCH:</label>
+            <div class="col-10">
+                <input type="search" class="form-control" id="searchInput">
+            </div>
         </div>
-        <div class="list-group">
+
+        <ul class="list-group mt-2 overflow-auto" style="max-height: 75vh" id="searchValue">
             {% for bh in boarding_houses %}
-            <div class="list-group-item list-group-item-action">
+            {% if bh.admin_approval %}
+            <li class="list-group-item list-group-item-action">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{bh.name}}</h5>
-                    <small class="text-muted">{{bh.location}}</small>
+                    <h4 class="mb-1">{{bh.name}}</h4>
+                    <small class="text-muted">{{bh.updated|timesince}} ago</small>
                 </div>
                 <p class="mb-1">{{bh.description}}</p>
                 <div class="d-flex w-100 justify-content-between">
-                    <small class="text-muted mt-2">{{bh.updated|timesince}} ago</small>
+                    <small class="text-muted mt-2">{{bh.location}}</small>
                     <a href="{% url 'bh-detail' bh.id %}" class="btn btn-sm btn-primary">View Detail</a>
                 </div>
-            </div>
+            </li>
+            {% endif %}
             {% endfor %}
+        </ul>
+    </div>
+
+    <div class="col-7">
+        <div class="ms-4">
+            <h5 class="ms-2 my-2 fw-bold">
+                BOARDING HOUSE MAP
+                <a href="{% url 'add-bh' %}" class="btn btn-primary float-end mb-2">
+                    ADD <i class="fa-solid fa-house-chimney-medical"></i>
+                </a>
+            </h5>
+            <div id="map" style="height: 480px; width: 100%;"></div>
         </div>
     </div>
-
-    <div class="col-6">
-        {% include 'bh-form.html' %}
-    </div>
-
-    <h4 class="text-center mt-5">Boarding House Maps</h4>
-    <div class="w-75 mx-auto" id="map" style="height: 450px; width: 100%;"></div>
 </div>
+
+<script>
+$(document).ready(function(){
+  $("#searchInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#searchValue li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+</script>
+
 {% endblock %}
