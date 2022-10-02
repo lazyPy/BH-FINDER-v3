@@ -19,19 +19,21 @@
 <body style="font-family: 'Times New Roman', sans-serif">
 
 <nav class="navbar bg-success">
-    <div class="container">
+    <div class="container-md container-lg">
         <a href="{% url 'home' %}"><img src="{% static 'image/isu-logo.png' %}" alt="" width="50"></a>
         <a href="#" class="navbar-brand text-light mx-auto">
-            CAUAYAN CITY BOARDING-HOUSE GEOGRAPHICAL INFORMATION SYSTEM</a>
+            <span class="d-md-none">CAUAYAN CITY BH GIS</span>
+            <span class="d-none d-md-block">CAUAYAN CITY BOARDING HOUSE GIS</span>
+        </a>
 
         <!-- Example split danger button -->
         {% if user.is_authenticated %}
         <div class="dropdown">
             <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown"
                     aria-expanded="false">
-                <img src="{% static 'image/user.png' %}" alt="" width="45">
+                <img src="{% static 'image/user-head.png' %}" alt="" width="45">
             </button>
-            <ul class="dropdown-menu" style="min-width: 120px;">
+            <ul class="dropdown-menu" style="min-width: 100px;">
                 {% if not request.user.is_superuser %}
                 <li><a class="dropdown-item" href="{% url 'my-bh' user.id %}">My BH</a></li>
                 {% endif %}
@@ -64,117 +66,94 @@
         async defer></script>
 
 <script>
-            // Note: This example requires that you consent to location sharing when
-            // prompted by your browser. If you see the error "The Geolocation service
-            // failed.", it means you probably did not give permission for the browser to
-            // locate you.
-            let map, infoWindow;
+function initMap() {
+    // Autocomplete Places
+    var input = document.getElementById('location');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+    autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        document.getElementById("latitude").value = place.geometry.location.lat();
+        document.getElementById("longitude").value = place.geometry.location.lng();
+    });
 
-            function initMap() {
+    // Variables
+    var map = new google.maps.Map(document.getElementById("map"));
+    var infoWindow = new google.maps.InfoWindow();
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
 
-                // Autocomplete Places
-                var input = document.getElementById('location');
-                var autocomplete = new google.maps.places.Autocomplete(input);
-                autocomplete.addListener('place_changed', function() {
-                    var place = autocomplete.getPlace();
-                    document.getElementById("latitude").value = place.geometry.location.lat();
-                    document.getElementById("longitude").value = place.geometry.location.lng();
-                });
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            latlang = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            map.setCenter(latlang);
+            map.setZoom(10);
 
-                // Maps
-                map = new google.maps.Map(document.getElementById("map"));
-                infoWindow = new google.maps.InfoWindow();
-                var directionsService = new google.maps.DirectionsService;
-                var directionsDisplay = new google.maps.DirectionsRenderer;
+            infoWindow.setPosition(latlang);
+            infoWindow.setContent("My location.");
+            infoWindow.open(map);
+            map.setCenter(latlang);
+        });
+    }
 
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                        initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                        map.setCenter(initialLocation);
-                        map.setZoom(10);
+    {% for bh in boarding_houses %}
+    {% if bh.admin_approval %}
+    addMarker({lat: {{bh.latitude}}, lng: {{bh.longitude}}}, '{{bh.name}}');
+    {% endif %}
+    {% endfor %}
 
-                        infoWindow.setPosition(initialLocation);
-                        infoWindow.setContent("My location.");
-                        infoWindow.open(map);
-                        map.setCenter(initialLocation);
-                    });
+    function addMarker(coords, content) {
+        const marker = new google.maps.Marker({
+            position: coords,
+            map: map,
+        });
+        var infoWindow2 = new google.maps.InfoWindow({
+            content: content
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+            infoWindow.setContent('My location');
+            infoWindow2.setContent(content);
+            infoWindow2.open(map, marker);
 
-                }
-
-
-                directionsDisplay.setMap(map);
-                {% for bh in boarding_houses %}
-                {% if bh.admin_approval %}
-                addMarker({lat: {{bh.latitude}}, lng: {{bh.longitude}}}, '{{bh.name}}');
-                {% endif %}
-                {% endfor %}
-
-                function addMarker(coords, content) {
-                    const marker = new google.maps.Marker({
-                        position: coords,
-                        map: map,
-
-                    });
-                    const infowindow = new google.maps.InfoWindow({
-                        content: content
-                    });
-                    google.maps.event.addListener( map,'click', function () {
-                        infoWindow.close();
-                    });
-                    google.maps.event.addListener(marker, 'click', function() {
-                        infoWindow.setContent(content);
-                        infoWindow.open(map, marker);
-
-                        directionsService.route({
-                            // origin: document.getElementById('start').value,
-                            origin: initialLocation,
-
-                            // destination: marker.getPosition(),
-                            destination: coords,
-                            travelMode: 'DRIVING'
-                        }, function(response, status) {
-                                if (status === 'OK') {
-                                    directionsDisplay.setDirections(response);
-                                } else {
-                                    window.alert('Directions request failed due to ' + status);
-                                }
-                            });
-                    });
-                }
-            }
-
-            function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-                infoWindow.setPosition(pos);
-                infoWindow.setContent(
-                    browserHasGeolocation
-                    ? "Error: The Geolocation service failed."
-                    : "Error: Your browser doesn't support geolocation."
-                );
-                infoWindow.open(map);
-            }
-
-            window.initMap = initMap;
-
-            function getLoc() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(showPosition);
-                }
-            }
-
-            function showPosition(position) {
-                document.getElementById("latitude").value = position.coords.latitude;
-                document.getElementById("longitude").value = position.coords.longitude;
-
-                var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                var geocoder = geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'latLng': latlng }, function (results, status) {
-                    if (status == google.maps.GeocoderStatus.OK) {
-                        if (results[1]) {
-                            document.getElementById("location").value = results[1].formatted_address;
-                        }
+            directionsService.route({
+                origin: latlang,
+                destination: coords,
+                travelMode: 'DRIVING'
+            }, function(response, status) {
+                    if (status === 'OK') {
+                        directionsDisplay.setDirections(response);
+                    } else {
+                        window.alert('Directions request failed due to ' + status);
                     }
-                });
+                }
+            );
+        });
+    }
+    directionsDisplay.setMap(map);
+}
+window.initMap = initMap;
+
+function showPosition(position) {
+    document.getElementById("latitude").value = position.coords.latitude;
+    document.getElementById("longitude").value = position.coords.longitude;
+
+    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    var geocoder = geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            if (results[1]) {
+                document.getElementById("location").value = results[1].formatted_address;
             }
+        }
+    });
+}
+
+function getLoc() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    }
+}
+
+$("#liveToast").delay(2500).fadeOut('slow');
 
 </script>
 

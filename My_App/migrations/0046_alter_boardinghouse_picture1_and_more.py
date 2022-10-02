@@ -13,16 +13,16 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='boardinghouse',
             name='picture1',
-            field=models.FileField(default='avatar.png', upload_to='bh-images/'),
+            field=models.FileField(default='bh-default.png', upload_to='bh-images/'),
         ),
         migrations.AlterField(
             model_name='boardinghouse',
             name='picture2',
-            field=models.FileField(default='avatar.png', upload_to='bh-images/'),
+            field=models.FileField(default='bh-default.png', upload_to='bh-images/'),
         ),
         migrations.AlterField(
             model_name='boardinghouse',
             name='picture3',
-            field=models.FileField(default='avatar.png', upload_to='bh-images/'),
+            field=models.FileField(default='bh-default.png', upload_to='bh-images/'),
         ),
     ]

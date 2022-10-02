@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -21,7 +22,7 @@ def loginUser(request):
             login(request, user)
             return redirect('admin-page')
         else:
-            print('Username OR password is incorrect')
+            messages.error(request, 'INCORRECT Username or Password')
 
     return render(request, 'login.html')
 
@@ -36,7 +37,10 @@ def registerUser(request):
             user = form.save()
             group = Group.objects.get(name='user')
             user.groups.add(group)
+            messages.info(request, 'Account Created!')
             return redirect('login')
+        else:
+            messages.error(request, 'Invalid Credentials. Try again!')
 
     context = {
         'form': form,
@@ -110,8 +114,8 @@ def addBH(request):
             picture2=request.FILES.get('picture2'),
             picture3=request.FILES.get('picture3')
         )
-
-        return redirect('home')
+        messages.success(request, 'Boarding house created!')
+        return redirect('my-bh', request.user.id)
     return render(request, 'add-bh.html')
 
 
@@ -120,6 +124,7 @@ def addBH(request):
 def deleteBH(request, pk):
     bh = BoardingHouse.objects.get(id=pk)
     bh.delete()
+    messages.success(request, 'Deleted Successfully!')
     return redirect('my-bh', pk)
 
 
@@ -149,8 +154,9 @@ def updateBH(request, pk):
     bh.picture2 = request.FILES['picture2']
     bh.picture3 = request.FILES['picture3']
     bh.save()
+    messages.success(request, 'Updated Successfully!')
 
-    return redirect('my-bh', pk)
+    return redirect('bh-detail', pk)
 
 
 def adminBHDetail(request, pk):
@@ -166,10 +172,12 @@ def adminBHDetail(request, pk):
         if bh.admin_approval == 'APPROVED':
             bh.admin_approval = True
             bh.save(update_fields=['admin_approval'])
+            messages.success(request, 'Updated Successfully!')
             bh.admin_approval = 'APPROVED'
         else:
             bh.admin_approval = False
             bh.save(update_fields=['admin_approval'])
+            messages.success(request, 'Updated Successfully!')
             bh.admin_approval = 'DENIED'
 
     context = {
